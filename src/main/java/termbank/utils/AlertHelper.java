@@ -4,7 +4,7 @@
  *  This class controls how alerts are sent
  */
 
-package termbank;
+package termbank.utils;
 
 import javafx.scene.control.Alert;
 import javafx.stage.Window;
