@@ -14,14 +14,13 @@ import javafx.scene.Scene;
 
 import javafx.stage.Stage;
 
+import java.io.IOException;
+
 public class TermBankApp extends Application {
 
 	private Stage primaryStage;
-	private Scene primaryScene;
-	
-	public TermBankApp() {
-		
-	}
+	private static Scene primaryScene;
+
 	
 	public static void main(String[] args) {
 		launch(args);
@@ -32,17 +31,26 @@ public class TermBankApp extends Application {
 		this.primaryStage = stage;
 		this.primaryStage.setTitle("TermBank 1.0");
 		
-		Parent root = FXMLLoader.load(getClass().
-				getResource("view/BankSheetLayout.fxml"));
-		
-		this.primaryScene = new Scene(root, 500, 500);
-		this.primaryScene.getStylesheets().clear();
-		this.primaryScene.getStylesheets().add("termbank/stylesheet.css");
+		primaryScene = new Scene(loadFXML("/fxml/BankSheetLayout"), 500, 500);
+
+		String stylesheet = TermBankApp.class.getResource("/stylesheets/stylesheet.css").toExternalForm();
+		primaryScene.getStylesheets().clear();
+		primaryScene.getStylesheets().add(stylesheet);
 			
 		
 		this.primaryStage.setScene(this.primaryScene);
 		this.primaryStage.setResizable(false);
 		this.primaryStage.show();
+	}
+
+	// This is for switching screens/ views
+	public static void setRoot(String fxml) throws IOException{
+		primaryScene.setRoot(loadFXML(fxml));
+	}
+
+	private static Parent loadFXML(String fxml) throws IOException {
+		FXMLLoader fxmlLoader = new FXMLLoader(TermBankApp.class.getResource(fxml + ".fxml"));
+		return fxmlLoader.load();
 	}
 	
 	public Stage returnStage() {
