@@ -5,6 +5,9 @@ module TermBank {
 
     opens termbank to javafx.fxml, javafx.graphics;
     opens termbank.view;
+    opens termbank.model to javafx.base;
+
     exports termbank.view to javafx.fxml;
     exports termbank to javafx.fxml, javafx.graphics;
+
 }
