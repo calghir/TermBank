@@ -32,7 +32,7 @@ import termbank.model.DataBank;
 
 public class BankSheetController {
 
-    @FXML private TableView<DataBank> tableView;
+    @FXML private TableView<DataBank> clientDataTable; //TableView that contains all of the client's data
 
     @FXML private TableColumn termColumn;
     @FXML private TableColumn definitionColumn;
@@ -42,18 +42,16 @@ public class BankSheetController {
 
     @FXML private TextArea definitionField;
 
-    @FXML private Button button;
+    @FXML private Label currentGroupSelected;
 
-    @FXML private Label currentGroup;
-
-    @FXML private ChoiceBox selectGroup;
-    @FXML private ChoiceBox viewGroup;   //ChoiceBox to view a group when looking at the Bank Sheet
+    @FXML private ChoiceBox selectViewingGroup; //A ChoiceBox of possible groups the client can choose to view from
+    @FXML private ChoiceBox availableGroups;    //A collection of available groups
 
     private TermBankApp termBankApp = new TermBankApp();
     String groupChoice = "";
 
-    /* ObservableList for DataBank objects */
-    ObservableList<DataBank> data;
+    /* ObservableList for all DataBank objects */
+    ObservableList<DataBank> dataRepository;
 
     /*
      * This function adds to an ObservableList of DataBank objects
@@ -66,34 +64,35 @@ public class BankSheetController {
     @FXML
     protected void addData(ActionEvent event) {
 
-        String chosenGroup = (String) selectGroup.getSelectionModel().getSelectedItem();
-
+        String chosenGroup = (String) selectViewingGroup.getSelectionModel().getSelectedItem();
 
         /* If the user does not want to create a new group and selectGroup is not "Create a new group" */
 
         if(createGroupField.getText().isEmpty()) { //User has chosen a group that already exists
 
-            if((selectGroup.getSelectionModel().getSelectedIndex() != 0)) {
+            if((selectViewingGroup.getSelectionModel().getSelectedIndex() != 0)) {
                 validateInput(termField.getText(), definitionField.getText(), chosenGroup, collection -> {
-                    data.add(new DataBank(termField.getText(), definitionField.getText(), chosenGroup));
+                    dataRepository.add(new DataBank(termField.getText(), definitionField.getText(), chosenGroup));
                 });
 
             }
         }
 
+
+
         else { //User decides to create a new group
 
-            if(viewGroup.getItems().contains(createGroupField.getText()))
+            if(availableGroups.getItems().contains(createGroupField.getText()))
                 AlertHelper.showAlert(Alert.AlertType.WARNING, termBankApp.returnStage(),
                         "Group already exists", "Choose another");
             else {
 
                 validateInput(termField.getText(), definitionField.getText(), chosenGroup, collection -> {
-                    data.add(new DataBank(termField.getText(), definitionField.getText(), createGroupField.getText()));
+                    dataRepository.add(new DataBank(termField.getText(), definitionField.getText(), createGroupField.getText()));
                 });
 
-                viewGroup.getItems().add(createGroupField.getText());
-                selectGroup.getItems().add(createGroupField.getText());
+                availableGroups.getItems().add(createGroupField.getText());
+                selectViewingGroup.getItems().add(createGroupField.getText());
 
             }
         }
@@ -109,23 +108,23 @@ public class BankSheetController {
     @FXML
     private void initialize() {
         createGroupField.setVisible(true);
-        data = tableView.getItems(); //Equal to the underlying TableView data
-        selectGroup.setItems(FXCollections.observableArrayList("Create new group"));
-        selectGroup.setValue("Create new group");
+        dataRepository = clientDataTable.getItems(); //Equal to the underlying TableView data
+        selectViewingGroup.setItems(FXCollections.observableArrayList("Create new group"));
+        selectViewingGroup.setValue("Create new group");
 
-        viewGroup.setItems(FXCollections.observableArrayList("All Groups"));
-        viewGroup.setValue("All Groups");
+        availableGroups.setItems(FXCollections.observableArrayList("All Groups"));
+        availableGroups.setValue("All Groups");
 
-        currentGroup.setId("group-label");
+        currentGroupSelected.setId("group-label");
         termField.setId("color-field");
 
 
         /* This monitors how groups are created and stored */
-        selectGroup.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
+        selectViewingGroup.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
 
             @Override
             public void changed(ObservableValue ov, Number value, Number new_value) {
-                String index = (String) selectGroup.getItems().get((Integer) new_value);
+                String index = (String) selectViewingGroup.getItems().get((Integer) new_value);
                 if(index.equals("Create new group")) {
                     createGroupField.setVisible(true);
                 }
@@ -137,7 +136,7 @@ public class BankSheetController {
         });
 
         /* TableView cell editing */
-        tableView.setEditable(true);
+        clientDataTable.setEditable(true);
         termColumn.setCellFactory(TextFieldTableCell.forTableColumn());
         termColumn.setOnEditCommit(
                 new EventHandler<CellEditEvent<DataBank, String>>() {
@@ -172,22 +171,22 @@ public class BankSheetController {
 
         ObservableList<DataBank> newData = FXCollections.observableArrayList();
 
-        String selectedGroup = (String) viewGroup.getSelectionModel().getSelectedItem();
+        String selectedGroup = (String) availableGroups.getSelectionModel().getSelectedItem();
 
         if(selectedGroup.equals("All Groups")) {
-            currentGroup.setText(selectedGroup);
-            tableView.setItems(data);
+            currentGroupSelected.setText(selectedGroup);
+            clientDataTable.setItems(dataRepository);
         }
 
-        for(DataBank d : data) {
+        for(DataBank d : dataRepository) {
             if(d.getGroup().equals(selectedGroup)) {
                 newData.add(d);
             }
         }
 
         if(!newData.isEmpty()) {
-            currentGroup.setText(selectedGroup);
-            tableView.setItems(newData);
+            currentGroupSelected.setText(selectedGroup);
+            clientDataTable.setItems(newData);
         }
 
     }

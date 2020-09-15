@@ -11,9 +11,9 @@ import javafx.beans.property.StringProperty;
 public class DataBank {
 
     /* String properties that will be observed by TableView */
-    private StringProperty term = new SimpleStringProperty("");       // A term that the user will enter
-    private StringProperty definition = new SimpleStringProperty(""); // A definition that pairs with the term
-    private StringProperty group = new SimpleStringProperty("");      // A group associated with term & group
+    private StringProperty term = new SimpleStringProperty("");      // A term that the user will enter
+    private StringProperty definition = new SimpleStringProperty("");// A definition that pairs with the term
+    private StringProperty group = new SimpleStringProperty("");     // A group associated with term & group
 
     public DataBank(String term, String definition, String group) {
         setTerm(term);
