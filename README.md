@@ -13,3 +13,7 @@ access and view unique lists of terms and definitions!
 # Viewing
 By default, the table of values will show terms and their definitions for **all** groups.
 The user may specify a single group to view.
+
+# Programmers
+[calghir](https://github.com/calghir)
+[RisBye1](https://github.com/RisBye1)
