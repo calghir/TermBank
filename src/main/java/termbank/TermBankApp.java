@@ -58,8 +58,4 @@ public class TermBankApp extends Application {
         return this.primaryStage;
     }
 
-    public Scene returnScene() {
-        return this.primaryScene;
-    }
-
 }

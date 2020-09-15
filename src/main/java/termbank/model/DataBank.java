@@ -22,7 +22,7 @@ public class DataBank {
     }
 
     public DataBank() {
-
+        this(null, null, null);
     }
 
     public void setTerm(String value) {

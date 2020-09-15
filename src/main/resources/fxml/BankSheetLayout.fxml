@@ -17,7 +17,6 @@
 <?import javafx.scene.text.Text?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.cell.*?>
-<?import fxmltableview.*?>
 <?import java.lang.*?>
 <?import termbank.model.DataBank?>
 
