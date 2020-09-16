@@ -61,7 +61,6 @@ public class BankSheetController {
 
     @FXML
     protected void addData(ActionEvent event) {
-
         String chosenGroup = (String) selectViewingGroup.getSelectionModel().getSelectedItem();
 
         /* Selected group choice is anything other than 'Create new group' */
