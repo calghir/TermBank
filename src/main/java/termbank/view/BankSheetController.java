@@ -16,7 +16,6 @@ import javafx.fxml.FXML;
 
 import javafx.scene.control.Alert;
 
-import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
@@ -48,7 +47,6 @@ public class BankSheetController {
     @FXML private ChoiceBox availableGroups;    //A collection of available groups
 
     private TermBankApp termBankApp = new TermBankApp();
-    String groupChoice = "";
 
     /* ObservableList for all DataBank objects */
     ObservableList<DataBank> dataRepository;
@@ -66,34 +64,29 @@ public class BankSheetController {
 
         String chosenGroup = (String) selectViewingGroup.getSelectionModel().getSelectedItem();
 
-        /* If the user does not want to create a new group and selectGroup is not "Create a new group" */
-
-        if(createGroupField.getText().isEmpty()) { //User has chosen a group that already exists
-
-            if((selectViewingGroup.getSelectionModel().getSelectedIndex() != 0)) {
+        /* Selected group choice is anything other than 'Create new group' */
+        if((selectViewingGroup.getSelectionModel().getSelectedIndex() != 0)) {
                 validateInput(termField.getText(), definitionField.getText(), chosenGroup, collection -> {
-                    dataRepository.add(new DataBank(termField.getText(), definitionField.getText(), chosenGroup));
+                    dataRepository.add(new DataBank(termField.getText(), definitionField.getText(),
+                            chosenGroup));
                 });
-
-            }
         }
-
-
 
         else { //User decides to create a new group
 
+            /* User attempted to create a group that already exists */
             if(availableGroups.getItems().contains(createGroupField.getText()))
                 AlertHelper.showAlert(Alert.AlertType.WARNING, termBankApp.returnStage(),
                         "Group already exists", "Choose another");
             else {
-
-                validateInput(termField.getText(), definitionField.getText(), chosenGroup, collection -> {
+                if(validateInput(termField.getText(), definitionField.getText(), createGroupField.getText(), collection -> {
                     dataRepository.add(new DataBank(termField.getText(), definitionField.getText(), createGroupField.getText()));
-                });
+                }))
 
-                availableGroups.getItems().add(createGroupField.getText());
-                selectViewingGroup.getItems().add(createGroupField.getText());
-
+                { // The input has been validated, add new group to list of available groups
+                    availableGroups.getItems().add(createGroupField.getText());
+                    selectViewingGroup.getItems().add(createGroupField.getText());
+                };
             }
         }
 
@@ -118,20 +111,15 @@ public class BankSheetController {
         currentGroupSelected.setId("group-label");
         termField.setId("color-field");
 
-
         /* This monitors how groups are created and stored */
-        selectViewingGroup.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
-
-            @Override
-            public void changed(ObservableValue ov, Number value, Number new_value) {
-                String index = (String) selectViewingGroup.getItems().get((Integer) new_value);
-                if(index.equals("Create new group")) {
-                    createGroupField.setVisible(true);
-                }
-                else {
-                    createGroupField.setVisible(false);
-                    createGroupField.setText("");
-                }
+        selectViewingGroup.getSelectionModel().selectedIndexProperty().addListener((ov, value, new_value) -> {
+            String index = (String) selectViewingGroup.getItems().get((Integer) new_value);
+            if(index.equals("Create new group")) {
+                createGroupField.setVisible(true);
+            }
+            else {
+                createGroupField.setVisible(false);
+                createGroupField.setText("");
             }
         });
 
@@ -139,33 +127,18 @@ public class BankSheetController {
         clientDataTable.setEditable(true);
         termColumn.setCellFactory(TextFieldTableCell.forTableColumn());
         termColumn.setOnEditCommit(
-                new EventHandler<CellEditEvent<DataBank, String>>() {
-                    @Override
-                    public void handle(CellEditEvent<DataBank, String> t) {
-                        ((DataBank) t.getTableView().getItems().get(
-                                t.getTablePosition().getRow())
-                        ).setTerm(t.getNewValue());
-                    }
-                }
+                (EventHandler<CellEditEvent<DataBank, String>>) t -> t.getTableView().getItems().get(
+                        t.getTablePosition().getRow()).setTerm(t.getNewValue())
         );
 
         definitionColumn.setCellFactory(TextFieldTableCell.forTableColumn());
         definitionColumn.setOnEditCommit(
-                new EventHandler<CellEditEvent<DataBank, String>>() {
-                    @Override
-                    public void handle(CellEditEvent<DataBank, String> t) {
-                        ((DataBank) t.getTableView().getItems().get(
-                                t.getTablePosition().getRow())
-                        ).setDefinition(t.getNewValue());
-                    }
-                }
+                (EventHandler<CellEditEvent<DataBank, String>>) t -> t.getTableView().getItems().get(
+                        t.getTablePosition().getRow()).setDefinition(t.getNewValue())
         );
     }
 
-    /*
-     * This function allows the user to view a certain group at a time
-     */
-
+    /* This function allows the user to select and view one group at a time (as opposed to 'All Groups') */
     @FXML
     protected void updateDataView() {
 
@@ -191,12 +164,18 @@ public class BankSheetController {
 
     }
 
-    private void validateInput(String term, String definition, String group, Consumer<DataBank> operation) {
-        if(term.isEmpty() || definition.isEmpty() || group.isEmpty())
+    private boolean validateInput(String term, String definition, String group, Consumer<DataBank> operation) {
+        boolean isAValidInput = true;
+
+        if(term.isEmpty() || definition.isEmpty() || group.isEmpty()) {
             AlertHelper.showAlert(Alert.AlertType.WARNING, termBankApp.returnStage(),
                     "One or more fields is empty", "Please correct this");
-        else
-            operation.accept(null);
-    }
+            isAValidInput = false;
+        }
 
+        else
+            operation.accept(new DataBank());
+
+        return isAValidInput;
+    }
 }
