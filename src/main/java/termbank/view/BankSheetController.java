@@ -43,8 +43,8 @@ public class BankSheetController {
 
     @FXML private Label currentGroupSelected;
 
-    @FXML public ChoiceBox selectViewingGroup; //A ChoiceBox of possible groups the client can choose to view from
-    @FXML public ChoiceBox availableGroups;    //A collection of available groups
+    @FXML private ChoiceBox selectViewingGroup; //A ChoiceBox of possible groups the client can choose to view from
+    @FXML private ChoiceBox availableGroups;    //A collection of available groups
 
     private TermBankApp termBankApp = new TermBankApp();
     private DatabaseConnection databaseConnection = new DatabaseConnection();
