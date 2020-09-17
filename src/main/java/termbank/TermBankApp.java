@@ -30,7 +30,9 @@ public class TermBankApp extends Application {
         this.primaryStage = stage;
         this.primaryStage.setTitle("TermBank 1.0");
 
-        primaryScene = new Scene(loadFXML("/fxml/BankSheetLayout"), 500, 500);
+        String bankSheetLayout = "/fxml/BankSheetLayout"; // FXML code that describes the graphics
+
+        primaryScene = new Scene(loadFXML(bankSheetLayout), 500, 500);
 
         String stylesheet = TermBankApp.class.getResource("/stylesheets/stylesheet.css").toExternalForm();
         primaryScene.getStylesheets().clear();
@@ -54,10 +56,6 @@ public class TermBankApp extends Application {
 
     public Stage returnStage() {
         return this.primaryStage;
-    }
-
-    public Scene returnScene() {
-        return this.primaryScene;
     }
 
 }
