@@ -6,8 +6,6 @@
 
 package termbank.view;
 import java.util.function.Consumer;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -27,7 +25,7 @@ import javafx.scene.control.cell.TextFieldTableCell;
 import termbank.utils.AlertHelper;
 import termbank.TermBankApp;
 import termbank.model.DataBank;
-
+import termbank.data.DatabaseConnection;
 
 public class BankSheetController {
 
@@ -47,6 +45,7 @@ public class BankSheetController {
     @FXML private ChoiceBox availableGroups;    //A collection of available groups
 
     private TermBankApp termBankApp = new TermBankApp();
+    private DatabaseConnection databaseConnection = new DatabaseConnection();
 
     /* ObservableList for all DataBank objects */
     ObservableList<DataBank> dataRepository;
@@ -100,7 +99,12 @@ public class BankSheetController {
     @FXML
     private void initialize() {
         createGroupField.setVisible(true);
-        dataRepository = clientDataTable.getItems(); //Equal to the underlying TableView data
+
+        //dataRepository = clientDataTable.getItems(); //Equal to the underlying TableView data
+
+        /* ! This statement is temporary! It is only to test if the TableView can read in existing data ! */
+        clientDataTable.setItems(databaseConnection.viewDatabaseData());
+
         selectViewingGroup.setItems(FXCollections.observableArrayList("Create new group"));
         selectViewingGroup.setValue("Create new group");
 
@@ -164,17 +168,13 @@ public class BankSheetController {
     }
 
     private boolean validateInput(String term, String definition, String group, Consumer<DataBank> operation) {
-        boolean isAValidInput = true;
-
         if(term.isEmpty() || definition.isEmpty() || group.isEmpty()) {
             AlertHelper.showAlert(Alert.AlertType.WARNING, termBankApp.returnStage(),
                     "One or more fields is empty", "Please correct this");
-            isAValidInput = false;
+            return false;
         }
-
         else
             operation.accept(new DataBank());
-
-        return isAValidInput;
+        return true;
     }
 }

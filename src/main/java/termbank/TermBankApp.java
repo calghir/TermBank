@@ -44,7 +44,7 @@ public class TermBankApp extends Application {
         this.primaryStage.show();
     }
 
-    // This is for switching screens/ views
+    // This is for switching screens/views
     public static void setRoot(String fxml) throws IOException{
         primaryScene.setRoot(loadFXML(fxml));
     }
