@@ -23,7 +23,6 @@ import javafx.scene.control.cell.TextFieldTableCell;
 import termbank.utils.AlertHelper;
 import termbank.TermBankApp;
 import termbank.model.DataBank;
-import termbank.data.DatabaseConnection;
 
 public class BankSheetController {
 
@@ -34,7 +33,6 @@ public class BankSheetController {
 
     @FXML private TextField termField;
     @FXML private TextField createCategoryField;
-
     @FXML private TextArea definitionField;
 
     @FXML private Label currentCategorySelected;
@@ -43,7 +41,6 @@ public class BankSheetController {
     @FXML private ChoiceBox availableCategories;    // A collection of available categories
 
     private TermBankApp termBankApp = new TermBankApp();
-    private DatabaseConnection databaseConnection = new DatabaseConnection();
 
     /* ObservableList for all DataBank objects */
     ObservableList<DataBank> dataRepository;
@@ -63,8 +60,7 @@ public class BankSheetController {
         /* Selected category choice is anything other than 'Create new category' */
         if((selectViewingCategory.getSelectionModel().getSelectedIndex() != 0)) {
                 validateInput(termField.getText(), definitionField.getText(), chosenCategory, collection -> {
-                    dataRepository.add(new DataBank(termField.getText(), definitionField.getText(),
-                            chosenCategory));
+                    dataRepository.add(new DataBank(chosenCategory, termField.getText(), definitionField.getText()));
                 });
         }
 
@@ -76,7 +72,8 @@ public class BankSheetController {
                         "Category already exists", "Choose another");
             else {
                 if(validateInput(termField.getText(), definitionField.getText(), createCategoryField.getText(), collection -> {
-                    dataRepository.add(new DataBank(termField.getText(), definitionField.getText(), createCategoryField.getText()));
+                    dataRepository.add(new DataBank(createCategoryField.getText(), termField.getText(),
+                            definitionField.getText()));
                 }))
 
                 { // The input has been validated, add new category to list of available category
@@ -90,7 +87,6 @@ public class BankSheetController {
         termField.setText("");
         definitionField.setText("");
         createCategoryField.setText("");
-
     }
 
     @SuppressWarnings("unchecked")
@@ -98,10 +94,10 @@ public class BankSheetController {
     private void initialize() {
         createCategoryField.setVisible(true);
 
-        //dataRepository = clientDataTable.getItems(); //Equal to the underlying TableView data
+        dataRepository = clientDataTable.getItems(); //Equal to the underlying TableView data
 
         /* ! This statement is temporary! It is only to test if the TableView can read in existing data ! */
-        clientDataTable.setItems(databaseConnection.viewDatabaseData());
+//        clientDataTable.setItems(databaseConnection.viewDatabaseData());
 
         selectViewingCategory.setItems(FXCollections.observableArrayList("Create new category"));
         selectViewingCategory.setValue("Create new category");

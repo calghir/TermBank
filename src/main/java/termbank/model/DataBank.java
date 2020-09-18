@@ -5,68 +5,47 @@
  */
 package termbank.model;
 
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
-
 public class DataBank {
 
     /* String properties that will be observed by TableView */
-    private StringProperty category = new SimpleStringProperty("");
-    private StringProperty term = new SimpleStringProperty("");
-    private StringProperty definition = new SimpleStringProperty("");
+    private String category;
+    private String term;
+    private String definition;
 
 
     public DataBank(String category, String term, String definition) {
-        setCategory(category);
-        setTerm(term);
-        setDefinition(definition);
-
+       this.category = category;
+       this.term = term;
+       this.definition = definition;
     }
 
     public DataBank() {
         this(null, null, null);
     }
 
-    public void setTerm(String value) {
-        termProperty().set(value);
+    /* Setter methods: */
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public void setTerm(String term) {
+        this.term = term;
+    }
+
+    public void setDefinition(String definition) {
+        this.definition = definition;
+    }
+
+    /* Getter methods */
+    public String getCategory() {
+        return this.category;
     }
 
     public String getTerm() {
-        return term.get();
-    }
-
-    public StringProperty termProperty() {
-        if(term == null)
-            term = new SimpleStringProperty(this, "term");
-        return term;
-    }
-
-    public void setDefinition(String value) {
-        definitionProperty().set(value);
+        return this.term;
     }
 
     public String getDefinition() {
-        return definition.get();
+        return this.definition;
     }
-
-    public StringProperty definitionProperty() {
-        if(definition == null)
-            definition = new SimpleStringProperty(this, "definition");
-        return definition;
-    }
-
-    public void setCategory(String value) {
-        categoryProperty().set(value);
-    }
-
-    public String getCategory() {
-        return category.get();
-    }
-
-    public StringProperty categoryProperty() {
-        if(category == null)
-            category = new SimpleStringProperty(this, "category");
-        return category;
-    }
-
 }
