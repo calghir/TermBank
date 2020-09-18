@@ -3,6 +3,7 @@ module TermBank {
     requires javafx.controls;
     requires javafx.graphics;
     requires java.sql;
+    requires opencsv;
 
     opens termbank to javafx.fxml, javafx.graphics;
     opens termbank.view;

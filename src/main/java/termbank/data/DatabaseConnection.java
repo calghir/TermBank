@@ -10,6 +10,7 @@ public class DatabaseConnection {
 
     private static Connection conn = null;
     private static final String DATABASE_NAME = "jdbc:sqlite:E:/TermBank/src/main/resources/db/termbank.db";
+//    public static final String DATABASE_NAME = "jdbc:sqlite:/home/risbah/IdeaProjects/TermBank/src/main/resources/db/termbank.db";
 
     public DatabaseConnection() {
     }
