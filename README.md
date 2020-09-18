@@ -15,5 +15,5 @@ By default, the table of values will show terms and their definitions for **all*
 The user may specify a single category to view.
 
 # Programmers
-[calghir](https://github.com/calghir)
+[computeh](https://github.com/computeh)
 [RisBye1](https://github.com/RisBye1)
