@@ -12,7 +12,6 @@ public class DataBank {
     private String term;
     private String definition;
 
-
     public DataBank(String category, String term, String definition) {
        this.category = category;
        this.term = term;
