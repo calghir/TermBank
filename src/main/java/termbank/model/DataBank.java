@@ -11,13 +11,13 @@ import javafx.beans.property.StringProperty;
 public class DataBank {
 
     /* String properties that will be observed by TableView */
-    private StringProperty group = new SimpleStringProperty("");     // A group associated with term & group
-    private StringProperty term = new SimpleStringProperty("");      // A term that the user will enter
-    private StringProperty definition = new SimpleStringProperty("");// A definition that pairs with the term
+    private StringProperty category = new SimpleStringProperty("");
+    private StringProperty term = new SimpleStringProperty("");
+    private StringProperty definition = new SimpleStringProperty("");
 
 
-    public DataBank(String group, String term, String definition) {
-        setGroup(group);
+    public DataBank(String category, String term, String definition) {
+        setCategory(category);
         setTerm(term);
         setDefinition(definition);
 
@@ -55,18 +55,18 @@ public class DataBank {
         return definition;
     }
 
-    public void setGroup(String value) {
-        groupProperty().set(value);
+    public void setCategory(String value) {
+        categoryProperty().set(value);
     }
 
-    public String getGroup() {
-        return group.get();
+    public String getCategory() {
+        return category.get();
     }
 
-    public StringProperty groupProperty() {
-        if(group == null)
-            group = new SimpleStringProperty(this, "group");
-        return group;
+    public StringProperty categoryProperty() {
+        if(category == null)
+            category = new SimpleStringProperty(this, "category");
+        return category;
     }
 
 }

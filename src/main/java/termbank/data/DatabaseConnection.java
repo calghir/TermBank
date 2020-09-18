@@ -40,7 +40,7 @@ public class DatabaseConnection {
     public DataBank createDataBank(ResultSet resultSet) {
         DataBank dataBank = new DataBank();
         try {
-            dataBank.setGroup(resultSet.getString("category"));
+            dataBank.setCategory(resultSet.getString("category"));
             dataBank.setTerm(resultSet.getString("term"));
             dataBank.setDefinition(resultSet.getString("definition"));
 

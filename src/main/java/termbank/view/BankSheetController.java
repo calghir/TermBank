@@ -11,9 +11,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-
 import javafx.scene.control.Alert;
-
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
@@ -29,20 +27,20 @@ import termbank.data.DatabaseConnection;
 
 public class BankSheetController {
 
-    @FXML private TableView<DataBank> clientDataTable; //TableView that contains all of the client's data
+    @FXML private TableView<DataBank> clientDataTable; // TableView that contains all of the client's data
 
     @FXML private TableColumn termColumn;
     @FXML private TableColumn definitionColumn;
 
     @FXML private TextField termField;
-    @FXML private TextField createGroupField;
+    @FXML private TextField createCategoryField;
 
     @FXML private TextArea definitionField;
 
-    @FXML private Label currentGroupSelected;
+    @FXML private Label currentCategorySelected;
 
-    @FXML private ChoiceBox selectViewingGroup; //A ChoiceBox of possible groups the client can choose to view from
-    @FXML private ChoiceBox availableGroups;    //A collection of available groups
+    @FXML private ChoiceBox selectViewingCategory;  // A ChoiceBox of possible categories the client can choose to view
+    @FXML private ChoiceBox availableCategories;    // A collection of available categories
 
     private TermBankApp termBankApp = new TermBankApp();
     private DatabaseConnection databaseConnection = new DatabaseConnection();
@@ -54,36 +52,36 @@ public class BankSheetController {
      * This function adds to an ObservableList of DataBank objects
      *
      * - ALL DataBank objects will be stored in an ObservableList
-     * - For each new group created, add to an ObservableList, which when updated,
+     * - For each new category created, add to an ObservableList, which when updated,
      *   will reflect changes to both ChoiceBoxes
      */
 
     @FXML
     protected void addData(ActionEvent event) {
-        String chosenGroup = (String) selectViewingGroup.getSelectionModel().getSelectedItem();
+        String chosenCategory = (String) selectViewingCategory.getSelectionModel().getSelectedItem();
 
-        /* Selected group choice is anything other than 'Create new group' */
-        if((selectViewingGroup.getSelectionModel().getSelectedIndex() != 0)) {
-                validateInput(termField.getText(), definitionField.getText(), chosenGroup, collection -> {
+        /* Selected category choice is anything other than 'Create new category' */
+        if((selectViewingCategory.getSelectionModel().getSelectedIndex() != 0)) {
+                validateInput(termField.getText(), definitionField.getText(), chosenCategory, collection -> {
                     dataRepository.add(new DataBank(termField.getText(), definitionField.getText(),
-                            chosenGroup));
+                            chosenCategory));
                 });
         }
 
-        else { //User decides to create a new group
+        else { //User decides to create a new category
 
-            /* User attempted to create a group that already exists */
-            if(availableGroups.getItems().contains(createGroupField.getText()))
+            /* User attempted to create a category that already exists */
+            if(availableCategories.getItems().contains(createCategoryField.getText()))
                 AlertHelper.showAlert(Alert.AlertType.WARNING, termBankApp.returnStage(),
-                        "Group already exists", "Choose another");
+                        "Category already exists", "Choose another");
             else {
-                if(validateInput(termField.getText(), definitionField.getText(), createGroupField.getText(), collection -> {
-                    dataRepository.add(new DataBank(termField.getText(), definitionField.getText(), createGroupField.getText()));
+                if(validateInput(termField.getText(), definitionField.getText(), createCategoryField.getText(), collection -> {
+                    dataRepository.add(new DataBank(termField.getText(), definitionField.getText(), createCategoryField.getText()));
                 }))
 
-                { // The input has been validated, add new group to list of available groups
-                    availableGroups.getItems().add(createGroupField.getText());
-                    selectViewingGroup.getItems().add(createGroupField.getText());
+                { // The input has been validated, add new category to list of available category
+                    availableCategories.getItems().add(createCategoryField.getText());
+                    selectViewingCategory.getItems().add(createCategoryField.getText());
                 };
             }
         }
@@ -91,38 +89,38 @@ public class BankSheetController {
         /* Set all fields back to empty */
         termField.setText("");
         definitionField.setText("");
-        createGroupField.setText("");
+        createCategoryField.setText("");
 
     }
 
     @SuppressWarnings("unchecked")
     @FXML
     private void initialize() {
-        createGroupField.setVisible(true);
+        createCategoryField.setVisible(true);
 
         //dataRepository = clientDataTable.getItems(); //Equal to the underlying TableView data
 
         /* ! This statement is temporary! It is only to test if the TableView can read in existing data ! */
         clientDataTable.setItems(databaseConnection.viewDatabaseData());
 
-        selectViewingGroup.setItems(FXCollections.observableArrayList("Create new group"));
-        selectViewingGroup.setValue("Create new group");
+        selectViewingCategory.setItems(FXCollections.observableArrayList("Create new category"));
+        selectViewingCategory.setValue("Create new category");
 
-        availableGroups.setItems(FXCollections.observableArrayList("All Groups"));
-        availableGroups.setValue("All Groups");
+        availableCategories.setItems(FXCollections.observableArrayList("All Categories"));
+        availableCategories.setValue("All Categories");
 
-        currentGroupSelected.setId("group-label");
+        currentCategorySelected.setId("category-label");
         termField.setId("color-field");
 
-        /* This monitors how groups are created and stored */
-        selectViewingGroup.getSelectionModel().selectedIndexProperty().addListener((ov, value, new_value) -> {
-            String index = (String) selectViewingGroup.getItems().get((Integer) new_value);
-            if(index.equals("Create new group")) {
-                createGroupField.setVisible(true);
+        /* This monitors how categories are created and stored */
+        selectViewingCategory.getSelectionModel().selectedIndexProperty().addListener((ov, value, new_value) -> {
+            String index = (String) selectViewingCategory.getItems().get((Integer) new_value);
+            if(index.equals("Create new category")) {
+                createCategoryField.setVisible(true);
             }
             else {
-                createGroupField.setVisible(false);
-                createGroupField.setText("");
+                createCategoryField.setVisible(false);
+                createCategoryField.setText("");
             }
         });
 
@@ -141,34 +139,34 @@ public class BankSheetController {
         );
     }
 
-    /* This function allows the user to select and view one group at a time (as opposed to 'All Groups') */
+    /* This function allows the user to select and view one category at a time (as opposed to 'All Categories') */
     @FXML
     protected void updateDataView() {
 
         ObservableList<DataBank> newData = FXCollections.observableArrayList();
 
-        String selectedGroup = (String) availableGroups.getSelectionModel().getSelectedItem();
+        String selectedCategory = (String) availableCategories.getSelectionModel().getSelectedItem();
 
-        if(selectedGroup.equals("All Groups")) {
-            currentGroupSelected.setText(selectedGroup);
+        if(selectedCategory.equals("All Categories")) {
+            currentCategorySelected.setText(selectedCategory);
             clientDataTable.setItems(dataRepository);
         }
 
         for(DataBank d : dataRepository) {
-            if(d.getGroup().equals(selectedGroup)) {
+            if(d.getCategory().equals(selectedCategory)) {
                 newData.add(d);
             }
         }
 
         if(!newData.isEmpty()) {
-            currentGroupSelected.setText(selectedGroup);
+            currentCategorySelected.setText(selectedCategory);
             clientDataTable.setItems(newData);
         }
 
     }
 
-    private boolean validateInput(String term, String definition, String group, Consumer<DataBank> operation) {
-        if(term.isEmpty() || definition.isEmpty() || group.isEmpty()) {
+    private boolean validateInput(String category, String term, String definition, Consumer<DataBank> operation) {
+        if(term.isEmpty() || definition.isEmpty() || category.isEmpty()) {
             AlertHelper.showAlert(Alert.AlertType.WARNING, termBankApp.returnStage(),
                     "One or more fields is empty", "Please correct this");
             return false;
