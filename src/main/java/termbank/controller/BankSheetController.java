@@ -11,6 +11,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.chart.PieChart;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
@@ -20,6 +21,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.TextFieldTableCell;
+import termbank.data.DatabaseConnection;
 import termbank.utils.AlertHelper;
 import termbank.TermBankApp;
 import termbank.model.DataBank;
@@ -41,6 +43,7 @@ public class BankSheetController {
     @FXML private ChoiceBox availableCategories;    // A collection of available categories
 
     private TermBankApp termBankApp = new TermBankApp();
+    private DatabaseConnection databaseConnection = new DatabaseConnection();
 
     /* ObservableList for all DataBank objects */
     ObservableList<DataBank> dataRepository;
@@ -54,7 +57,7 @@ public class BankSheetController {
      */
 
     @FXML
-    protected void addData(ActionEvent event) {
+    protected void addData() {
         String chosenCategory = (String) selectViewingCategory.getSelectionModel().getSelectedItem();
 
         /* Selected category choice is anything other than 'Create new category' */
@@ -94,16 +97,13 @@ public class BankSheetController {
     private void initialize() {
         createCategoryField.setVisible(true);
 
-        dataRepository = clientDataTable.getItems(); //Equal to the underlying TableView data
-
-        /* ! This statement is temporary! It is only to test if the TableView can read in existing data ! */
-//        clientDataTable.setItems(databaseConnection.viewDatabaseData());
-
         selectViewingCategory.setItems(FXCollections.observableArrayList("Create new category"));
         selectViewingCategory.setValue("Create new category");
-
         availableCategories.setItems(FXCollections.observableArrayList("All Categories"));
         availableCategories.setValue("All Categories");
+
+        dataRepository = databaseConnection.setDatabaseData(availableCategories, selectViewingCategory);
+        clientDataTable.setItems(dataRepository);
 
         currentCategorySelected.setId("category-label");
         termField.setId("color-field");
