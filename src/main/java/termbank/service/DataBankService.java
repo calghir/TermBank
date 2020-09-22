@@ -18,8 +18,8 @@ public class DataBankService implements DAO {
             dataBank.setTerm(resultSet.getString("term"));
             dataBank.setDefinition(resultSet.getString("definition"));
 
-        } catch (SQLException ex){
-            System.out.println(ex.getMessage());
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
         }
 
         return dataBank;
@@ -50,10 +50,10 @@ public class DataBankService implements DAO {
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
-
         return existingSQLData;
     }
 
+    /* This method adds a new DataBank object to the database table*/
     public static void insertToDatabase(String category, String term, String definition) {
 
         String SQL = "INSERT INTO databanktable(category,term,definition)VALUES(?,?,?)";
@@ -65,6 +65,44 @@ public class DataBankService implements DAO {
             preparedStatement.setString(1, category);
             preparedStatement.setString(2, term);
             preparedStatement.setString(3, definition);
+            preparedStatement.executeUpdate();
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    /* This method updates terms in the database table */
+    public static void updateDatabaseTerm(String valBefore, String valAfter) {
+
+        try (Connection connection = DriverManager.getConnection(DATABASE_NAME)) {
+
+            String sqlUpdate = "UPDATE databanktable "
+                    + "SET term =  ? "
+                    + "WHERE term = ?";
+
+            PreparedStatement preparedStatement = connection.prepareStatement(sqlUpdate);
+            preparedStatement.setString(1, valAfter);
+            preparedStatement.setString(2, valBefore);
+            preparedStatement.executeUpdate();
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    /* This method updates definitions in the database table */
+    public static void updateDatabaseDefinition(String valBefore, String valAfter) {
+
+        try (Connection connection = DriverManager.getConnection(DATABASE_NAME)) {
+
+            String sqlUpdate = "UPDATE databanktable "
+                    + "SET definition =  ? "
+                    + "WHERE definition = ?";
+
+            PreparedStatement preparedStatement = connection.prepareStatement(sqlUpdate);
+            preparedStatement.setString(1, valAfter);
+            preparedStatement.setString(2, valBefore);
             preparedStatement.executeUpdate();
 
         } catch (SQLException e) {
