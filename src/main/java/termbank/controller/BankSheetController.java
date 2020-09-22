@@ -4,14 +4,12 @@
  * This file controls the FXML properties
  */
 
-package termbank.view;
+package termbank.controller;
 import java.util.function.Consumer;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.chart.PieChart;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
@@ -21,7 +19,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.TextFieldTableCell;
-import termbank.data.DatabaseConnection;
+import termbank.service.DataBankService;
 import termbank.utils.AlertHelper;
 import termbank.TermBankApp;
 import termbank.model.DataBank;
@@ -43,10 +41,18 @@ public class BankSheetController {
     @FXML private ChoiceBox availableCategories;    // A collection of available categories
 
     private TermBankApp termBankApp = new TermBankApp();
-    private DatabaseConnection databaseConnection = new DatabaseConnection();
 
     /* ObservableList for all DataBank objects */
-    ObservableList<DataBank> dataRepository;
+    private ObservableList<DataBank> dataRepository;
+    private ObservableList<DataBank> viewingList = dataRepository;
+
+    public BankSheetController() {
+
+    }
+
+    public ObservableList<DataBank> returnRepository() {
+        return this.dataRepository;
+    }
 
     /*
      * This function adds to an ObservableList of DataBank objects
@@ -61,10 +67,20 @@ public class BankSheetController {
         String chosenCategory = (String) selectViewingCategory.getSelectionModel().getSelectedItem();
 
         /* Selected category choice is anything other than 'Create new category' */
+
         if((selectViewingCategory.getSelectionModel().getSelectedIndex() != 0)) {
-                validateInput(termField.getText(), definitionField.getText(), chosenCategory, collection -> {
+            validateInput(chosenCategory, termField.getText(), definitionField.getText(), collection -> {
+                if(currentCategorySelected.getText().equals("All categories") ||
+                        (!chosenCategory.equals(currentCategorySelected.getText())))
                     dataRepository.add(new DataBank(chosenCategory, termField.getText(), definitionField.getText()));
-                });
+                else {
+                    dataRepository.add(new DataBank(chosenCategory, termField.getText(), definitionField.getText()));
+                    viewingList.add(new DataBank(chosenCategory, termField.getText(), definitionField.getText()));
+                }
+
+                //INSERT INTO DATABASE
+                DataBankService.insertToDatabase(chosenCategory, termField.getText(), definitionField.getText());
+            });
         }
 
         else { //User decides to create a new category
@@ -74,9 +90,13 @@ public class BankSheetController {
                 AlertHelper.showAlert(Alert.AlertType.WARNING, termBankApp.returnStage(),
                         "Category already exists", "Choose another");
             else {
-                if(validateInput(termField.getText(), definitionField.getText(), createCategoryField.getText(), collection -> {
+                if(validateInput(createCategoryField.getText(), termField.getText(), definitionField.getText(), collection -> {
                     dataRepository.add(new DataBank(createCategoryField.getText(), termField.getText(),
                             definitionField.getText()));
+
+                    //INSERT INTO DATABASE
+                    DataBankService.insertToDatabase(createCategoryField.getText(), termField.getText(),
+                            definitionField.getText());
                 }))
 
                 { // The input has been validated, add new category to list of available category
@@ -102,7 +122,7 @@ public class BankSheetController {
         availableCategories.setItems(FXCollections.observableArrayList("All Categories"));
         availableCategories.setValue("All Categories");
 
-        dataRepository = databaseConnection.setDatabaseData(availableCategories, selectViewingCategory);
+        dataRepository = DataBankService.retrieveDataInfo(selectViewingCategory, availableCategories);
         clientDataTable.setItems(dataRepository);
 
         currentCategorySelected.setId("category-label");
@@ -118,6 +138,14 @@ public class BankSheetController {
                 createCategoryField.setVisible(false);
                 createCategoryField.setText("");
             }
+        });
+
+        /* Changes viewing category immediately after selecting a new one*/
+        availableCategories.getSelectionModel().selectedIndexProperty().addListener((ov, value, new_value) -> {
+            String categoryChoice = (String) availableCategories.getItems().get((Integer) new_value);
+            currentCategorySelected.setText(categoryChoice);
+            viewingList = changeViewingCategory(categoryChoice);
+            clientDataTable.setItems(viewingList);
         });
 
         /* TableView cell editing */
@@ -136,29 +164,21 @@ public class BankSheetController {
     }
 
     /* This function allows the user to select and view one category at a time (as opposed to 'All Categories') */
-    @FXML
-    protected void updateDataView() {
+    // TODO: Add this method to the 'View' class for MVC - Caleb
+    private ObservableList<DataBank> changeViewingCategory(String category) {
 
-        ObservableList<DataBank> newData = FXCollections.observableArrayList();
+        ObservableList<DataBank> newDataBank = FXCollections.observableArrayList();
 
-        String selectedCategory = (String) availableCategories.getSelectionModel().getSelectedItem();
+        if(!category.equals("All Categories")) {
 
-        if(selectedCategory.equals("All Categories")) {
-            currentCategorySelected.setText(selectedCategory);
-            clientDataTable.setItems(dataRepository);
-        }
-
-        for(DataBank d : dataRepository) {
-            if(d.getCategory().equals(selectedCategory)) {
-                newData.add(d);
+            for(DataBank d : dataRepository){
+                if(d.getCategory().equals(category))
+                    newDataBank.add(d);
             }
+            return newDataBank;
         }
-
-        if(!newData.isEmpty()) {
-            currentCategorySelected.setText(selectedCategory);
-            clientDataTable.setItems(newData);
-        }
-
+        else
+            return dataRepository;
     }
 
     private boolean validateInput(String category, String term, String definition, Consumer<DataBank> operation) {
