@@ -1,8 +1,18 @@
 # TermBank
 
-TermBank is an application that allows users to store terms and definitions.
+Hi, my name is Caleb, and I am building an independent project to hone my skills in Java, its many framworks,
+and optimal programming designs. If you have any questions about this project, feel free to contact me.
+
+TermBank is a java application that allows users to store terms and definitions into a database.
 These terms and definitions are placed in unique categories so the user can quickly
 access and view unique lists of terms and definitions!
+
+# Tools/APIs used:
+* MySQL to safely maintain user's data
+* Java Database Connectivity (JBDC) to query and inspect database information
+* Java FX 13 to demonstrate visual modeling of data persistence
+* Spring Boot (soon) to remove boilerplate code and simplify production
+
 
 # Functionality
 * Add term - The user can add a term to their collection (e.g. a word you just learned from a book you're reading)
@@ -14,6 +24,5 @@ access and view unique lists of terms and definitions!
 By default, the table of values will show terms and their definitions for **all** categories.
 The user may specify a single category to view.
 
-# Programmers
+# Programmer
 [computeh](https://github.com/computeh)
-[RisBye1](https://github.com/RisBye1)

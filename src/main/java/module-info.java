@@ -6,11 +6,10 @@ module TermBank {
     requires opencsv;
 
     opens termbank to javafx.fxml, javafx.graphics;
-    opens termbank.controller;
-    opens termbank.view;
+    opens termbank.controllers;
     opens termbank.model to javafx.base;
 
-    exports termbank.controller to javafx.fxml;
+    exports termbank.controllers to javafx.fxml;
     exports termbank to javafx.fxml, javafx.graphics;
 
 }
