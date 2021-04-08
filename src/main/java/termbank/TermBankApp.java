@@ -31,9 +31,8 @@ public class TermBankApp extends Application {
         this.primaryStage.setTitle("TermBank 1.0");
 
         String bankSheetLayout = "/fxml/BankSheetLayout"; // Main Layout
-        String registerLayout = "/fxml/RegisterLayout"; // Sample Register Layout
 
-        primaryScene = new Scene(loadFXML(registerLayout), 750, 500);
+        primaryScene = new Scene(loadFXML(bankSheetLayout), 750, 500);
 
         String stylesheet = TermBankApp.class.getResource("/stylesheets/stylesheet.css").toExternalForm();
         primaryScene.getStylesheets().clear();

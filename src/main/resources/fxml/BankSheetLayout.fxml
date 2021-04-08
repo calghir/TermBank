@@ -26,13 +26,13 @@
             <ChoiceBox fx:id = "availableCategories" prefWidth = "125"/>
         </HBox>
     </HBox>
-    <TableView fx:id = "clientDataTable" GridPane.columnIndex = "0" GridPane.rowIndex = "1" prefWidth = "750">
+    <TableView fx:id = "dataTable" GridPane.columnIndex = "0" GridPane.rowIndex = "1" prefWidth = "750">
         <columns>
-            <TableColumn fx:id = "termColumn" text = "Term" prefWidth = "375">
+            <TableColumn fx:id = "termCol" text = "Term" prefWidth = "375">
                 <cellValueFactory><PropertyValueFactory property = "term"/>
                 </cellValueFactory>
             </TableColumn>
-            <TableColumn fx:id = "definitionColumn" text = "Definition" prefWidth = "375">
+            <TableColumn fx:id = "defCol" text = "Definition" prefWidth = "375">
                 <cellValueFactory><PropertyValueFactory property = "definition"/>
                 </cellValueFactory>
             </TableColumn>
