@@ -3,6 +3,7 @@
 Hi, my name is Caleb, and I am building an independent project to hone my skills in Java, its many framworks,
 and optimal programming designs. If you have any questions about this project, feel free to contact me.
 
+# What is TermBank?
 TermBank is a java application that allows users to store terms and definitions into a database.
 These terms and definitions are placed in unique categories so the user can quickly
 access and view unique lists of terms and definitions!
