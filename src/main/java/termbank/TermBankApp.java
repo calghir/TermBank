@@ -28,7 +28,7 @@ public class TermBankApp extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         this.primaryStage = stage;
-        this.primaryStage.setTitle("TermBank 1.0");
+        this.primaryStage.setTitle("TermBank");
 
         String bankSheetLayout = "/fxml/BankSheetLayout"; // Main Layout
 

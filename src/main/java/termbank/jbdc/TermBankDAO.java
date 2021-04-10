@@ -39,6 +39,33 @@ public class TermBankDAO implements DAOImpl {
         return existingData;
     }
 
+    public static ObservableList<DataBank> buildDataForCategory(String category) {
+        ObservableList<DataBank> data = FXCollections.observableArrayList();
+
+        try (Connection connection = DriverManager
+                .getConnection(DATABASE_URL, DATABASE_USERNAME, DATABASE_PASSWORD);
+
+             // Step 2:Create a statement using connection object
+             PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM databanktable WHERE category='" + category + "'"
+                     + "WHERE category=" + category)) {
+            System.out.println("A connection to MySQL has been established");
+
+            ResultSet resultSet = preparedStatement.executeQuery("SELECT * FROM databanktable WHERE category='" + category + "'");
+
+            while(resultSet.next()) {
+                DataBank dataBank = createDataBank(resultSet);
+                data.add(dataBank);
+            }
+
+
+        } catch (SQLException e) {
+            // print SQL exception information
+            printSQLException(e);
+        }
+
+        return data;
+    }
+
     public static DataBank createDataBank(ResultSet resultSet) {
         DataBank dataBank = new DataBank();
         try {
@@ -52,43 +79,43 @@ public class TermBankDAO implements DAOImpl {
         return dataBank;
     }
 
-    public static void insertDataBank(String category, String term, String definition) throws SQLException {
-
-        // Step 1: Establishing a Connection and
-        // try-with-resource statement will auto close the connection.
-        try (Connection connection = DriverManager
-                .getConnection(DATABASE_URL, DATABASE_USERNAME, DATABASE_PASSWORD);
-
-             // Step 2:Create a statement using connection object
-             PreparedStatement preparedStatement = connection.prepareStatement(INSERT_QUERY)) {
-
-            String SQL = "SELECT * FROM databanktable WHERE category='" + category + "'";
-            ResultSet resultSet = preparedStatement.executeQuery(SQL);
-
-            if(!resultSet.next()) { // Category does not already exist in database - good to go
-
-                preparedStatement.setString(1, category);
-                preparedStatement.setString(2, term);
-                preparedStatement.setString(3, definition);
-
-                System.out.println(preparedStatement);
-                // Step 3: Execute the query or update query
-                preparedStatement.executeUpdate();
-            }
-            else { // Category already exists
-
-                Alert alert = new Alert(Alert.AlertType.NONE);
-                alert.setAlertType(Alert.AlertType.ERROR);
-                alert.setContentText("This category already exists!");
-                alert.setHeaderText("Please create a new one");
-                alert.show();
-//                AlertHandler.showAlert(Alert.AlertType.ERROR, Window, "The category already exists!", "Try again");
-            }
-        } catch (SQLException e) {
-            // print SQL exception information
-            printSQLException(e);
-        }
-    }
+//    public static void insertDataBank(DataBank dataBank) throws SQLException {
+//
+//        // Step 1: Establishing a Connection and
+//        // try-with-resource statement will auto close the connection.
+//        try (Connection connection = DriverManager
+//                .getConnection(DATABASE_URL, DATABASE_USERNAME, DATABASE_PASSWORD);
+//
+//             // Step 2:Create a statement using connection object
+//             PreparedStatement preparedStatement = connection.prepareStatement(INSERT_QUERY)) {
+//
+//            String SQL = "SELECT * FROM databanktable WHERE category='" + dataBank.getCategory() + "'";
+//            ResultSet resultSet = preparedStatement.executeQuery(SQL);
+//
+//            if(!resultSet.next()) { // Category does not already exist in database - good to go
+//
+//                preparedStatement.setString(1, dataBank.getCategory());
+//                preparedStatement.setString(2, dataBank.getTerm());
+//                preparedStatement.setString(3, dataBank.getDefinition());
+//
+//                System.out.println(preparedStatement);
+//                // Step 3: Execute the query or update query
+//                preparedStatement.executeUpdate();
+//            }
+//            else { // Category already exists
+//
+//                Alert alert = new Alert(Alert.AlertType.NONE);
+//                alert.setAlertType(Alert.AlertType.ERROR);
+//                alert.setContentText("This category already exists!");
+//                alert.setHeaderText("Please create a new one");
+//                alert.show();
+////                AlertHandler.showAlert(Alert.AlertType.ERROR, Window, "The category already exists!", "Try again");
+//            }
+//        } catch (SQLException e) {
+//            // print SQL exception information
+//            printSQLException(e);
+//        }
+//    }
 
     public static void printSQLException(SQLException ex) {
         for(Throwable e : ex) {
